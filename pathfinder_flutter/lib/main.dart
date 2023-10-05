@@ -1,5 +1,6 @@
 import 'package:pathfinder_client/pathfinder_client.dart';
 import 'package:flutter/material.dart';
+import 'package:pathfinder_flutter/core/themeData.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 
 // Sets up a singleton client object that can be used to talk to the server from
@@ -20,11 +21,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Serverpod Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Serverpod Example'),
+      title: 'Pathfinder',
+      theme: pathfinderThemeData(context),
+      debugShowCheckedModeBanner: false,
+      home: const MyHomePage(title: 'Pathfinder'),
     );
   }
 }
@@ -67,7 +67,15 @@ class MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(
+          widget.title,
+          textAlign: TextAlign.center,
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.menu),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -122,7 +130,7 @@ class _ResultDisplay extends StatelessWidget {
       backgroundColor = Colors.green[300]!;
       text = resultMessage!;
     } else {
-      backgroundColor = Colors.grey[300]!;
+      backgroundColor = Colors.grey[600]!;
       text = 'No server response yet.';
     }
 
