@@ -9,7 +9,7 @@ class PathfinderEndpoint extends Endpoint {
   Future<void> addSampleRoute(Session session) async {
     var v = await PathfinderRoute.findSingleRow(
       session,
-      where: (p0) => p0.id.equals(5),
+      where: (p0) => p0.id.equals(10),
     );
     if (v != null) {
       return;
