@@ -24,7 +24,7 @@ class RouteCard extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: const BoxDecoration(
-                  color: Colors.red,
+                  color: Colors.grey,
                   image: DecorationImage(
                     image: NetworkImage(
                       "https://api.mganczarczyk.pl/cyberpunk-background",
