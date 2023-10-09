@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pathfinder_client/pathfinder_client.dart';
+import 'package:pathfinder_flutter/components/route_card.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,7 +15,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   final Client client = Client('http://192.168.1.34:8080/')
     ..connectivityMonitor = FlutterConnectivityMonitor();
-  List<VisitPointImage> tests = [];
+  List<PathfinderRoute> routes = [];
 
   @override
   void initState() {
@@ -24,10 +25,10 @@ class HomePageState extends State<HomePage> {
   }
 
   void getAllRoutes() async {
-    await client.pathfinder.addSampleImage();
-    final xuwu = await client.pathfinder.getAvailableImages();
+    await client.pathfinder.addSampleRoute();
+    final xroutes = await client.pathfinder.getAvailablRoutes();
     setState(() {
-      tests = xuwu;
+      routes = xroutes;
     });
   }
 
@@ -49,9 +50,9 @@ class HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            ...tests.map(
-              (e) => Text(
-                e.toString(),
+            ...routes.map(
+              (route) => RouteCard(
+                route: route,
               ),
             )
           ],

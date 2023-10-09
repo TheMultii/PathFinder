@@ -22,7 +22,7 @@ CREATE TABLE "visit_point" (
   "name" text NOT NULL,
   "description" text,
   "images" json NOT NULL,
-  "lang" double precision NOT NULL,
+  "long" double precision NOT NULL,
   "lat" double precision NOT NULL
 );
 

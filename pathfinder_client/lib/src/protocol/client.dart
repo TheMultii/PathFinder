@@ -8,7 +8,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
-import 'package:pathfinder_client/src/protocol/visit_point_image.dart' as _i3;
+import 'package:pathfinder_client/src/protocol/route.dart' as _i3;
 import 'dart:io' as _i4;
 import 'protocol.dart' as _i5;
 
@@ -18,16 +18,16 @@ class _EndpointPathfinder extends _i1.EndpointRef {
   @override
   String get name => 'pathfinder';
 
-  _i2.Future<List<_i3.VisitPointImage>> getAvailableImages() =>
-      caller.callServerEndpoint<List<_i3.VisitPointImage>>(
+  _i2.Future<List<_i3.PathfinderRoute>> getAvailablRoutes() =>
+      caller.callServerEndpoint<List<_i3.PathfinderRoute>>(
         'pathfinder',
-        'getAvailableImages',
+        'getAvailablRoutes',
         {},
       );
 
-  _i2.Future<void> addSampleImage() => caller.callServerEndpoint<void>(
+  _i2.Future<void> addSampleRoute() => caller.callServerEndpoint<void>(
         'pathfinder',
-        'addSampleImage',
+        'addSampleRoute',
         {},
       );
 }

@@ -4,5 +4,5 @@ fields:
     name: String
     description: String?
     images: List<VisitPointImage?>
-    lang: double
+    long: double
     lat: double

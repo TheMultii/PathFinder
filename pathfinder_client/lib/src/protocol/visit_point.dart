@@ -15,7 +15,7 @@ class VisitPoint extends _i1.SerializableEntity {
     required this.name,
     this.description,
     required this.images,
-    required this.lang,
+    required this.long,
     required this.lat,
   });
 
@@ -30,7 +30,7 @@ class VisitPoint extends _i1.SerializableEntity {
           .deserialize<String?>(jsonSerialization['description']),
       images: serializationManager
           .deserialize<List<_i2.VisitPointImage?>>(jsonSerialization['images']),
-      lang: serializationManager.deserialize<double>(jsonSerialization['lang']),
+      long: serializationManager.deserialize<double>(jsonSerialization['long']),
       lat: serializationManager.deserialize<double>(jsonSerialization['lat']),
     );
   }
@@ -46,7 +46,7 @@ class VisitPoint extends _i1.SerializableEntity {
 
   List<_i2.VisitPointImage?> images;
 
-  double lang;
+  double long;
 
   double lat;
 
@@ -57,7 +57,7 @@ class VisitPoint extends _i1.SerializableEntity {
       'name': name,
       'description': description,
       'images': images,
-      'lang': lang,
+      'long': long,
       'lat': lat,
     };
   }

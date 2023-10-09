@@ -24,25 +24,25 @@ class Endpoints extends _i1.EndpointDispatch {
       name: 'pathfinder',
       endpoint: endpoints['pathfinder']!,
       methodConnectors: {
-        'getAvailableImages': _i1.MethodConnector(
-          name: 'getAvailableImages',
+        'getAvailablRoutes': _i1.MethodConnector(
+          name: 'getAvailablRoutes',
           params: {},
           call: (
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
               (endpoints['pathfinder'] as _i2.PathfinderEndpoint)
-                  .getAvailableImages(session),
+                  .getAvailablRoutes(session),
         ),
-        'addSampleImage': _i1.MethodConnector(
-          name: 'addSampleImage',
+        'addSampleRoute': _i1.MethodConnector(
+          name: 'addSampleRoute',
           params: {},
           call: (
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
               (endpoints['pathfinder'] as _i2.PathfinderEndpoint)
-                  .addSampleImage(session),
+                  .addSampleRoute(session),
         ),
       },
     );

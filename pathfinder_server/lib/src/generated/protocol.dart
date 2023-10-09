@@ -13,7 +13,7 @@ import 'route.dart' as _i3;
 import 'visit_point.dart' as _i4;
 import 'visit_point_image.dart' as _i5;
 import 'protocol.dart' as _i6;
-import 'package:pathfinder_server/src/generated/visit_point_image.dart' as _i7;
+import 'package:pathfinder_server/src/generated/route.dart' as _i7;
 export 'route.dart';
 export 'visit_point.dart';
 export 'visit_point_image.dart';
@@ -106,7 +106,7 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'List<protocol:VisitPointImage?>',
         ),
         _i2.ColumnDefinition(
-          name: 'lang',
+          name: 'long',
           columnType: _i2.ColumnType.doublePrecision,
           isNullable: false,
           dartType: 'double',
@@ -219,9 +219,9 @@ class Protocol extends _i1.SerializationManagerServer {
           .map((e) => deserialize<_i6.VisitPointImage?>(e))
           .toList() as dynamic;
     }
-    if (t == List<_i7.VisitPointImage>) {
+    if (t == List<_i7.PathfinderRoute>) {
       return (data as List)
-          .map((e) => deserialize<_i7.VisitPointImage>(e))
+          .map((e) => deserialize<_i7.PathfinderRoute>(e))
           .toList() as dynamic;
     }
     try {

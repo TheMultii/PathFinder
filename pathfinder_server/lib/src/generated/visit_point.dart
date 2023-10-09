@@ -15,7 +15,7 @@ class VisitPoint extends _i1.TableRow {
     required this.name,
     this.description,
     required this.images,
-    required this.lang,
+    required this.long,
     required this.lat,
   }) : super(id);
 
@@ -30,7 +30,7 @@ class VisitPoint extends _i1.TableRow {
           .deserialize<String?>(jsonSerialization['description']),
       images: serializationManager
           .deserialize<List<_i2.VisitPointImage?>>(jsonSerialization['images']),
-      lang: serializationManager.deserialize<double>(jsonSerialization['lang']),
+      long: serializationManager.deserialize<double>(jsonSerialization['long']),
       lat: serializationManager.deserialize<double>(jsonSerialization['lat']),
     );
   }
@@ -43,7 +43,7 @@ class VisitPoint extends _i1.TableRow {
 
   List<_i2.VisitPointImage?> images;
 
-  double lang;
+  double long;
 
   double lat;
 
@@ -56,7 +56,7 @@ class VisitPoint extends _i1.TableRow {
       'name': name,
       'description': description,
       'images': images,
-      'lang': lang,
+      'long': long,
       'lat': lat,
     };
   }
@@ -68,7 +68,7 @@ class VisitPoint extends _i1.TableRow {
       'name': name,
       'description': description,
       'images': images,
-      'lang': lang,
+      'long': long,
       'lat': lat,
     };
   }
@@ -80,7 +80,7 @@ class VisitPoint extends _i1.TableRow {
       'name': name,
       'description': description,
       'images': images,
-      'lang': lang,
+      'long': long,
       'lat': lat,
     };
   }
@@ -103,8 +103,8 @@ class VisitPoint extends _i1.TableRow {
       case 'images':
         images = value;
         return;
-      case 'lang':
-        lang = value;
+      case 'long':
+        long = value;
         return;
       case 'lat':
         lat = value;
@@ -239,7 +239,7 @@ class VisitPointTable extends _i1.Table {
 
   final images = _i1.ColumnSerializable('images');
 
-  final lang = _i1.ColumnDouble('lang');
+  final long = _i1.ColumnDouble('long');
 
   final lat = _i1.ColumnDouble('lat');
 
@@ -249,7 +249,7 @@ class VisitPointTable extends _i1.Table {
         name,
         description,
         images,
-        lang,
+        long,
         lat,
       ];
 }
