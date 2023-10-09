@@ -1,0 +1,6 @@
+class: PathfinderRoute
+table: pathfinder_route
+fields:
+    name: String
+    description: String
+    points: List<VisitPoint?>,

@@ -1,0 +1,5 @@
+class: VisitPointImage
+table: visit_point_image
+fields:
+    url: String
+    description: String?

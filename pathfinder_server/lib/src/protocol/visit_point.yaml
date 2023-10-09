@@ -1,0 +1,8 @@
+class: VisitPoint
+table: visit_point
+fields:
+    name: String
+    description: String?
+    images: List<VisitPointImage?>
+    lang: double
+    lat: double
