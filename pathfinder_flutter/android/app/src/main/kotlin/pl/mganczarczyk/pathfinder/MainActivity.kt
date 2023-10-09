@@ -1,4 +1,4 @@
-package com.example.pathfinder_flutter
+package pl.mganczarczyk.pathfinder
 
 import io.flutter.embedding.android.FlutterActivity
 
