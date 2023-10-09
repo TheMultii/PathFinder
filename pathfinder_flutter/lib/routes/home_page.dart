@@ -46,16 +46,21 @@ class HomePageState extends State<HomePage> {
           icon: const Icon(Icons.menu),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            ...routes.map(
-              (route) => RouteCard(
-                route: route,
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Padding(
+          padding: const EdgeInsets.all(16).copyWith(
+            bottom: 8,
+          ),
+          child: Column(
+            children: [
+              ...routes.map(
+                (route) => RouteCard(
+                  route: route,
+                ),
               ),
-            )
-          ],
+            ],
+          ),
         ),
       ),
     );
