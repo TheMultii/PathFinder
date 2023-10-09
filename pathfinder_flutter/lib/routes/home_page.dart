@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pathfinder_client/pathfinder_client.dart';
+import 'package:pathfinder_flutter/components/drawer.dart';
 import 'package:pathfinder_flutter/components/route_card.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 
@@ -41,11 +42,8 @@ class HomePageState extends State<HomePage> {
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
-        leading: IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.menu),
-        ),
       ),
+      drawer: const AppDrawer(),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Padding(
