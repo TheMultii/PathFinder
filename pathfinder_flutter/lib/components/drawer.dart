@@ -32,7 +32,12 @@ class DrawerHeader extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          accountEmail: null,
+          accountEmail: const Opacity(
+            opacity: .5,
+            child: Text(
+              "Marcel Gańczarczyk",
+            ),
+          ),
           otherAccountsPictures: [
             ClipOval(
               child: Image.network(
@@ -51,15 +56,49 @@ class DrawerHeader extends StatelessWidget {
             ),
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(
+        Padding(
+          padding: const EdgeInsets.symmetric(
             horizontal: 8.0,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("uwu"),
+              Padding(
+                padding: const EdgeInsets.all(8.0).copyWith(right: 0),
+                child: const Text(
+                  "> Dostępne trasy:",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+              ...[1, 2, 3, 4]
+                  .map(
+                    (e) => InkWell(
+                      customBorder: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      onTap: () {},
+                      child: ListTile(
+                        title: Text(
+                          "Trasa $e",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: Text(
+                          "Opis trasy $e",
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        leading: const Icon(
+                          Icons.location_pin,
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
             ],
           ),
         ),
