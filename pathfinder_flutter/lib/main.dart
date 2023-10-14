@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Pathfinder',
       theme: pathfinderThemeData(context),
       debugShowCheckedModeBanner: false,
-      home: const HomePage(title: 'Pathfinder'),
+      home: const HomePage(),
     );
   }
 }
