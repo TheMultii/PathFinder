@@ -1,13 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:pathfinder_client/pathfinder_client.dart';
 import 'package:pathfinder_flutter/components/drawer.dart';
+import 'package:pathfinder_flutter/components/pathfinder_bottom_sheet_modal.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -20,6 +23,7 @@ class HomePageState extends State<HomePage> {
   final Client client = Client('http://192.168.1.34:8080/')
     ..connectivityMonitor = FlutterConnectivityMonitor();
   List<PathfinderRoute> routes = [];
+  List<LatLng> pathToNearestPoint = [];
   double currentDistanceToNextPoint = -1;
 
   Future<bool> _handleLocationPermission() async {
@@ -51,6 +55,35 @@ class HomePageState extends State<HomePage> {
     return true;
   }
 
+  Future<void> drawLine({VisitPoint? point}) async {
+    if (point?.long == null) return;
+    var point2 = LatLng(49.7835438, 19.0589105);
+
+    Uri url = Uri.parse(
+        'http://router.project-osrm.org/route/v1/driving/${point!.long},${point.lat};${point2.longitude},${point2.latitude}?steps=true&annotations=true&geometries=geojson&overview=full');
+    http.Response response = await http.get(url);
+
+    var router =
+        jsonDecode(response.body)['routes'][0]['geometry']['coordinates'];
+    List<LatLng> routepoints = [];
+    for (int i = 0; i < router.length; i++) {
+      var split = router[i]
+          .toString()
+          .replaceAll("[", "")
+          .replaceAll("]", "")
+          .split(",");
+      routepoints.add(
+        LatLng(
+          double.parse(split[1]),
+          double.parse(split[0]),
+        ),
+      );
+    }
+    setState(() {
+      pathToNearestPoint = routepoints;
+    });
+  }
+
   Position? position;
   Timer? gpsTimer;
 
@@ -63,7 +96,7 @@ class HomePageState extends State<HomePage> {
     gpsTimer = Timer.periodic(const Duration(seconds: 5), (Timer t) {
       getCurrentPosition();
     });
-    getFakeRoute();
+    getFakeRoute().then((value) => drawLine(point: routes[0].points[0]));
   }
 
   @override
@@ -72,7 +105,7 @@ class HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  void getFakeRoute() async {
+  Future<void> getFakeRoute() async {
     final Random random = Random();
 
     final points = <VisitPoint>[];
@@ -154,7 +187,25 @@ class HomePageState extends State<HomePage> {
                   TileLayer(
                     urlTemplate:
                         'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+                    userAgentPackageName: 'pathfinder',
+                  ),
+                  PolylineLayer(
+                    polylineCulling: false,
+                    polylines: [
+                      Polyline(
+                        points: pathToNearestPoint,
+                        gradientColors: const [
+                          Color.fromARGB(255, 255, 0, 0),
+                          Color.fromARGB(255, 255, 127, 0),
+                          Color.fromARGB(255, 255, 255, 0),
+                          Color.fromARGB(255, 0, 255, 0),
+                          Color.fromARGB(255, 0, 0, 255),
+                          Color.fromARGB(255, 75, 0, 130),
+                          Color.fromARGB(255, 143, 0, 255),
+                        ],
+                        strokeWidth: 6,
+                      )
+                    ],
                   ),
                   MarkerLayer(
                     markers: [
@@ -189,8 +240,11 @@ class HomePageState extends State<HomePage> {
                       if (position != null && routes.isNotEmpty)
                         ...routes[0]
                             .points
-                            .map((e) => Marker(
-                                  point: LatLng(e!.lat, e.long),
+                            .map((visitPoint) => Marker(
+                                  point: LatLng(
+                                    visitPoint!.lat,
+                                    visitPoint.long,
+                                  ),
                                   width: 40,
                                   height: 40,
                                   builder: (BuildContext context) {
@@ -208,12 +262,12 @@ class HomePageState extends State<HomePage> {
                                 ))
                             .toList(),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
             Positioned(
-              bottom: 55,
+              bottom: 32,
               left: 0,
               child: Container(
                 width: MediaQuery.of(context).size.width,
