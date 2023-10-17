@@ -300,7 +300,7 @@ class RouteNavigationPageState extends State<RouteNavigationPage> {
                 height: 50,
                 child: Center(
                   child: Text(
-                    "latitude: ${position?.latitude},\nlongitude: ${position?.longitude}\nvDistance: $currentDistanceToNextPoint",
+                    "latitude: ${position?.latitude},\nlongitude: ${position?.longitude}\ndistance: $currentDistanceToNextPoint",
                     textAlign: TextAlign.center,
                   ),
                 ),
