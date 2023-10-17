@@ -33,17 +33,7 @@ class Endpoints extends _i1.EndpointDispatch {
           ) async =>
               (endpoints['pathfinder'] as _i2.PathfinderEndpoint)
                   .getAvailablRoutes(session),
-        ),
-        'addSampleRoute': _i1.MethodConnector(
-          name: 'addSampleRoute',
-          params: {},
-          call: (
-            _i1.Session session,
-            Map<String, dynamic> params,
-          ) async =>
-              (endpoints['pathfinder'] as _i2.PathfinderEndpoint)
-                  .addSampleRoute(session),
-        ),
+        )
       },
     );
   }

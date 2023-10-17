@@ -24,12 +24,6 @@ class _EndpointPathfinder extends _i1.EndpointRef {
         'getAvailablRoutes',
         {},
       );
-
-  _i2.Future<void> addSampleRoute() => caller.callServerEndpoint<void>(
-        'pathfinder',
-        'addSampleRoute',
-        {},
-      );
 }
 
 class Client extends _i1.ServerpodClient {
