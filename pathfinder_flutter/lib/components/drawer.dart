@@ -69,7 +69,7 @@ class _DrawerHeaderState extends State<DrawerHeader> {
         Padding(
           padding: const EdgeInsets.all(8.0).copyWith(left: 16, right: 16),
           child: const Text(
-            "> Dostępne trasy:",
+            "> Available routes:",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 13,
