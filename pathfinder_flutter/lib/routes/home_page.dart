@@ -250,7 +250,17 @@ class HomePageState extends State<HomePage> {
                                   builder: (BuildContext context) {
                                     return InkWell(
                                       onTap: () {
-                                        debugPrint(e.name);
+                                        showModalBottomSheet(
+                                          backgroundColor: Colors.transparent,
+                                          context: context,
+                                          isScrollControlled: true,
+                                          isDismissible: true,
+                                          builder: (BuildContext context) {
+                                            return PathFinderBottomSheetModal(
+                                              visitPoint: visitPoint,
+                                            );
+                                          },
+                                        );
                                       },
                                       child: const Icon(
                                         Icons.location_pin,
