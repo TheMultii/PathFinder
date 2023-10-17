@@ -128,7 +128,7 @@ class _DrawerHeaderState extends State<DrawerHeader> {
                         ),
                       )
                       .toList(),
-                  if (routes.isEmpty) const Text("Brak tras"),
+                  if (routes.isEmpty) const Text("No routes available."),
                 ],
               );
             },
