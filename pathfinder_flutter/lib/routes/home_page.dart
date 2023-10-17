@@ -240,36 +240,38 @@ class HomePageState extends State<HomePage> {
                       if (position != null && routes.isNotEmpty)
                         ...routes[0]
                             .points
-                            .map((visitPoint) => Marker(
-                                  point: LatLng(
-                                    visitPoint!.lat,
-                                    visitPoint.long,
-                                  ),
-                                  width: 40,
-                                  height: 40,
-                                  builder: (BuildContext context) {
-                                    return InkWell(
-                                      onTap: () {
-                                        showModalBottomSheet(
-                                          backgroundColor: Colors.transparent,
-                                          context: context,
-                                          isScrollControlled: true,
-                                          isDismissible: true,
-                                          builder: (BuildContext context) {
-                                            return PathFinderBottomSheetModal(
-                                              visitPoint: visitPoint,
-                                            );
-                                          },
-                                        );
-                                      },
-                                      child: const Icon(
-                                        Icons.location_pin,
-                                        size: 40,
-                                        color: Colors.black,
-                                      ),
-                                    );
-                                  },
-                                ))
+                            .map(
+                              (visitPoint) => Marker(
+                                point: LatLng(
+                                  visitPoint!.lat,
+                                  visitPoint.long,
+                                ),
+                                width: 40,
+                                height: 40,
+                                builder: (BuildContext context) {
+                                  return InkWell(
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        backgroundColor: Colors.transparent,
+                                        context: context,
+                                        isScrollControlled: true,
+                                        isDismissible: true,
+                                        builder: (BuildContext context) {
+                                          return PathFinderBottomSheetModal(
+                                            visitPoint: visitPoint,
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: const Icon(
+                                      Icons.location_pin,
+                                      size: 40,
+                                      color: Colors.black,
+                                    ),
+                                  );
+                                },
+                              ),
+                            )
                             .toList(),
                     ],
                   ),
