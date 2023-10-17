@@ -6,6 +6,7 @@ import 'package:pathfinder_flutter/routes/home_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+  await Hive.openBox('routes');
 
   runApp(const MyApp());
 }
