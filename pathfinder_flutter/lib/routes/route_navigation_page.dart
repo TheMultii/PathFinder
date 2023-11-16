@@ -405,6 +405,15 @@ class RouteNavigationPageState extends State<RouteNavigationPage> {
                   ),
                 ),
               )
+                  .animate()
+                  .fadeIn(
+                    duration: 150.ms,
+                  )
+                  .scale(
+                    begin: const Offset(0.2, 0.2),
+                    end: const Offset(1, 1),
+                    duration: 150.ms,
+                  ),
           ],
         ),
       ),
