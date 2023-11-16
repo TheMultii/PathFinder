@@ -141,7 +141,19 @@ class _DrawerHeaderState extends State<DrawerHeader> {
                           customBorder: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          onTap: () {},
+                          onTap: () {
+                            if (route.id == null) return;
+
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    RouteNavigationPage(
+                                  routeId: route.id!,
+                                  initialRoutesData: routes,
+                                ),
+                              ),
+                            );
+                          },
                           child: ListTile(
                             title: Text(
                               route.name,
