@@ -1,12 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pathfinder_client/pathfinder_client.dart';
 import 'package:pathfinder_flutter/components/drawer.dart';
 import 'package:pathfinder_flutter/components/pathfinder_bottom_sheet_modal.dart';
 import 'package:pathfinder_flutter/core/route_deep.dart';
+import 'package:pathfinder_flutter/core/visited_routes.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -14,20 +18,41 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
 class RouteNavigationPage extends StatefulWidget {
-  const RouteNavigationPage({Key? key}) : super(key: key);
+  final int routeId;
+  final List<PathfinderRoute>? initialRoutesData;
+
+  const RouteNavigationPage({
+    Key? key,
+    required this.routeId,
+    this.initialRoutesData,
+  }) : super(key: key);
 
   @override
   RouteNavigationPageState createState() => RouteNavigationPageState();
 }
 
 class RouteNavigationPageState extends State<RouteNavigationPage> {
-  final Client client = Client('http://192.168.1.34:8080/')
+  final Client client = Client('http://10.10.62.98:8080/')
     ..connectivityMonitor = FlutterConnectivityMonitor();
   final Box _hiveBox = Hive.box('routes');
+  final Box _visitedPointsBox = Hive.box('visited_routes');
+  late VisitedRoutes vR;
 
   List<PathfinderRoute> routes = [];
+  PathfinderRoute? selectedRoute;
+  VisitPoint? currentNearestPoint;
+
   List<LatLng> pathToNearestPoint = [];
   double currentDistanceToNextPoint = -1;
+
+  void endTheNavigation() {
+    _visitedPointsBox.delete("route_${selectedRoute!.id}");
+    Navigator.of(context).pop();
+  }
+
+  bool isCloseToTheNextPoint() {
+    return currentDistanceToNextPoint < 50;
+  }
 
   Future<bool> _handleLocationPermission() async {
     bool serviceEnabled;
@@ -35,9 +60,13 @@ class RouteNavigationPageState extends State<RouteNavigationPage> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
           content: Text(
-              'Location services are disabled. Please enable the services')));
+            'Location services are disabled. Please enable the services',
+          ),
+        ),
+      );
       return false;
     }
     permission = await Geolocator.checkPermission();
@@ -45,14 +74,23 @@ class RouteNavigationPageState extends State<RouteNavigationPage> {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permissions are denied')));
+          const SnackBar(
+            content: Text(
+              'Location permissions are denied',
+            ),
+          ),
+        );
         return false;
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
           content: Text(
-              'Location permissions are permanently denied, we cannot request permissions.')));
+            'Location permissions are permanently denied, we cannot request permissions.',
+          ),
+        ),
+      );
       return false;
     }
     return true;
@@ -95,27 +133,55 @@ class RouteNavigationPageState extends State<RouteNavigationPage> {
   Timer? gpsTimer;
 
   VisitPoint? getNearestPoint() {
-    if (position == null || routes.isEmpty) return null;
+    if (position == null || selectedRoute == null) return null;
     VisitPoint? nearestPoint;
 
     double nearestDistance = double.infinity;
-    for (var route in routes) {
-      for (var point in route.points) {
-        if (point == null) continue;
-        Distance distance = const Distance();
-        final double meter = distance(
-          LatLng(position!.latitude, position!.longitude),
-          LatLng(point.lat, point.long),
-        );
-        if (meter < nearestDistance) {
-          nearestDistance = meter;
-          nearestPoint = point;
-        }
+    for (var point in selectedRoute!.points) {
+      if (point == null) continue;
+      if (vR.visitedIDs.contains(point.id)) continue;
+
+      Distance distance = const Distance();
+      final double meter = distance(
+        LatLng(position!.latitude, position!.longitude),
+        LatLng(point.lat, point.long),
+      );
+      if (meter < nearestDistance) {
+        nearestDistance = meter;
+        nearestPoint = point;
       }
     }
     setState(() {
       currentDistanceToNextPoint = nearestDistance;
     });
+
+    if (isCloseToTheNextPoint()) {
+      if (!vR.visitedIDs.contains(currentNearestPoint?.id)) {
+        vR.visitedIDs.add(currentNearestPoint!.id!);
+        _visitedPointsBox.put("route_${selectedRoute!.id}", vR);
+      }
+
+      if (vR.visitedIDs.length == selectedRoute!.points.length) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("You've completed the route!"),
+              content: const Text("Congratulations!"),
+              actions: [
+                TextButton(
+                  child: const Text("Go back"),
+                  onPressed: () {
+                    endTheNavigation();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
+
     return nearestPoint;
   }
 
@@ -123,19 +189,41 @@ class RouteNavigationPageState extends State<RouteNavigationPage> {
   void initState() {
     super.initState();
 
+    if (widget.initialRoutesData != null) {
+      var r = widget.initialRoutesData!
+          .where((element) => element.id == widget.routeId);
+      if (r.isNotEmpty) {
+        selectedRoute = r.first;
+      }
+    }
+
+    if (selectedRoute == null) return;
+
+    vR = _visitedPointsBox.get(
+      "route_${selectedRoute!.id}",
+      defaultValue: VisitedRoutes(
+        selectedRoute!.name,
+        [],
+      ),
+    );
+
     getCurrentPosition().then((value) {
       getAllRoutes().then((value) {
+        var rr = routes.where((element) => element.id == widget.routeId);
+        if (rr.isNotEmpty) {
+          selectedRoute = rr.first;
+        }
         VisitPoint? nearestPoint = getNearestPoint();
 
         drawLine(point: nearestPoint);
       });
     });
     gpsTimer = Timer.periodic(const Duration(seconds: 20), (Timer t) {
-      // getCurrentPosition().then((value) {
-      //   VisitPoint? nearestPoint = getNearestPoint();
+      getCurrentPosition().then((value) {
+        VisitPoint? nearestPoint = getNearestPoint();
 
-      //   drawLine(point: nearestPoint);
-      // });
+        drawLine(point: nearestPoint);
+      });
     });
   }
 
@@ -159,10 +247,22 @@ class RouteNavigationPageState extends State<RouteNavigationPage> {
   }
 
   Future<void> getAllRoutes() async {
-    final xroutes = await client.pathfinder.getAvailablRoutes();
-    setState(() {
-      routes = xroutes;
-    });
+    try {
+      final xroutes = await client.pathfinder.getAvailablRoutes();
+
+      setState(() {
+        routes = xroutes;
+      });
+    } catch (e) {
+      final data = _hiveBox.get("routes");
+      if (data == null) {
+        return;
+      }
+      List<PathfinderRoute> r = RouteDeep.routeDeepFromJson(data);
+      setState(() {
+        routes = r;
+      });
+    }
 
     _hiveBox.put('routes', RouteDeep.routeDeepToJson(routes));
   }
@@ -172,7 +272,7 @@ class RouteNavigationPageState extends State<RouteNavigationPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          routes.isNotEmpty ? routes[0].name : 'Pathfinder',
+          selectedRoute != null ? selectedRoute!.name : 'Pathfinder',
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
@@ -249,9 +349,8 @@ class RouteNavigationPageState extends State<RouteNavigationPage> {
                             );
                           },
                         ),
-                      if (position != null && routes.isNotEmpty)
-                        ...routes[0]
-                            .points
+                      if (position != null && selectedRoute != null)
+                        ...selectedRoute!.points
                             .map(
                               (visitPoint) => Marker(
                                 point: LatLng(
@@ -290,21 +389,22 @@ class RouteNavigationPageState extends State<RouteNavigationPage> {
                 ],
               ),
             ),
-            Positioned(
-              bottom: 55,
-              left: 0,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                color: Colors.black45,
-                height: 50,
-                child: Center(
-                  child: Text(
-                    "latitude: ${position?.latitude},\nlongitude: ${position?.longitude}\ndistance: $currentDistanceToNextPoint",
-                    textAlign: TextAlign.center,
+            if (position != null)
+              Positioned(
+                bottom: 55,
+                left: 0,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.black45,
+                  height: 50,
+                  child: Center(
+                    child: Text(
+                      "latitude: ${position?.latitude},\nlongitude: ${position?.longitude}\ndistance: $currentDistanceToNextPoint",
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
-              ),
-            ),
+              )
           ],
         ),
       ),
