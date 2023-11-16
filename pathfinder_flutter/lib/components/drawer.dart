@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pathfinder_client/pathfinder_client.dart';
 import 'package:pathfinder_flutter/core/route_deep.dart';
+import 'package:pathfinder_flutter/routes/home_page.dart';
+import 'package:pathfinder_flutter/routes/route_navigation_page.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -9,6 +11,9 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Drawer(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.zero),
+      ),
       child: Column(
         children: [
           DrawerHeader(),
@@ -60,9 +65,39 @@ class _DrawerHeaderState extends State<DrawerHeader> {
             image: DecorationImage(
               opacity: .5,
               image: NetworkImage(
-                "https://api.mganczarczyk.pl/tairiku/random/wallpaper?safety=true",
+                "https://images.pexels.com/photos/2310713/pexels-photo-2310713.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
               ),
               fit: BoxFit.cover,
+              alignment: Alignment.center,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 8.0,
+            right: 8.0,
+            bottom: 8.0,
+          ),
+          child: InkWell(
+            customBorder: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            onTap: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (BuildContext context) => const HomePage(),
+                ),
+              );
+            },
+            child: const ListTile(
+              title: Text(
+                "Home Screen",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              leading: Icon(
+                Icons.home,
+              ),
             ),
           ),
         ),
