@@ -64,8 +64,8 @@ class PathFinderBottomSheetModal extends StatelessWidget {
                         8,
                       ),
                       child: Image.network(
-                        visitPoint.images.first?.url ??
-                            "https://api.mganczarczyk.pl/tairiku/random/streetmoe?seed=${visitPoint.name}",
+                        // visitPoint.images.first?.url ??
+                        "https://placehold.co/600x400/181818/FFF/png?text=${visitPoint.name.replaceAll(" ", "%20")}",
                         fit: BoxFit.cover,
                         height: 200,
                         width: MediaQuery.of(context).size.width,
@@ -89,6 +89,9 @@ class PathFinderBottomSheetModal extends StatelessWidget {
                   Text(
                     visitPoint.description ?? "No description",
                     textAlign: TextAlign.justify,
+                  ),
+                  const SizedBox(
+                    height: 32,
                   ),
                   Align(
                     alignment: Alignment.centerRight,
